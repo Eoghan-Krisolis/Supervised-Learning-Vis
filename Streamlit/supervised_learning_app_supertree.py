@@ -6,7 +6,9 @@ from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from supertree import SuperTree  # SuperTree expects the model object and extracts what it needs
 import re
-import os
+
+# Define the desired palette for classes.
+COLOUR_SEQUENCE = ["#F4F45C", "#C7E9B4", "#41B6C4"]
 
 def train_model(max_depth):
     iris = load_iris()
@@ -52,26 +54,72 @@ def generate_vis(clf, X, y, feature_names, class_names, sample=None):
         html_content = inject_decision_path_css(html_content, clf, sample)
     return html_content
 
-def show_data_visualisation(df, feature_names):
-    st.subheader("Initial Data Visualisation", help="This visualisation shows the data that we will use to train our supervised machine learning model. Use the controls above the visualisation to explore the data before training a model.")
-    # Create an interactive scatter matrix using Plotly Express.
+def show_scatter_matrix(df, feature_names):
     fig = px.scatter_matrix(
         df,
         dimensions=feature_names,
         color="target_name",
-        hover_data=df.columns, height=700,
-        color_discrete_sequence=["#FEFEBB","#C7E9B4","#41B6C4"]
+        hover_data=df.columns,
+        height=700,
+        color_discrete_sequence=COLOUR_SEQUENCE
     )
-    # Adjust layout to minimize overlap.
     fig.update_layout(
         margin=dict(l=50, r=50, t=50, b=50),
         autosize=True
     )
-    # Rotate x-axis tick labels in each subplot.
+    # Rotate x-axis tick labels for all subplots.
     for axis in fig.layout:
         if axis.startswith("xaxis"):
             fig.layout[axis].tickangle = -45
     st.plotly_chart(fig, use_container_width=True)
+
+def show_correlation_heatmap(df, feature_names):
+    # Compute correlation matrix of the features.
+    corr = df[feature_names+["target"]].corr()
+    fig = px.imshow(
+        corr,
+        text_auto=True,
+        aspect="auto",
+        color_continuous_scale='RdBu',
+        zmin=-1,
+        zmax=1
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+def show_stacked_histograms(df, feature_names):
+    
+    # Melt the DataFrame so that we have one row per observation per feature.
+    df_melt = df.melt(id_vars=["target", "target_name"], value_vars=feature_names,
+                      var_name="Feature", value_name="Value")
+    # Use Plotly Express to create a facet-wrapped histogram.
+    fig = px.histogram(
+        df_melt,
+        x="Value",
+        color="target_name",
+        facet_col="Feature",
+        facet_col_wrap=2,
+        barmode="stack",
+        nbins=40,
+        color_discrete_sequence=COLOUR_SEQUENCE
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+def show_data_visualisation(df, feature_names):
+    st.subheader("Initial Data Visualisation", 
+                 help="Explore different interactive visualisations of the dataset before training a model.")
+    vis_type = st.radio(
+        "Select Data Visualisation Type:",
+        ("Histograms", "Scatter Matrix", "Correlation Heatmap"), 
+        horizontal=True
+    )
+    if vis_type == "Scatter Matrix":
+        show_scatter_matrix(df, feature_names)
+    elif vis_type == "Correlation Heatmap":
+        show_correlation_heatmap(df, feature_names)
+    elif vis_type == "Histograms":
+        show_stacked_histograms(df, feature_names)
 
 def get_path_in_order(clf, sample):
     """
@@ -102,8 +150,7 @@ def get_decision_path_edges(clf, sample):
         edges.append((path[i], path[i+1]))
     return edges
 
-# Define the desired palette for classes.
-CLASS_COLORS = ["#FEFEBB", "#C7E9B4", "#41B6C4"]
+
 
 def hex_to_rgb(hex_color):
     """Convert a hex color string (e.g. "#ff7f0e") to an (r, g, b) tuple."""
@@ -212,7 +259,7 @@ def highlight_dot(clf, sample, feature_names, class_names):
             else:
                 # Get the index of the majority class.
                 majority_class = int(np.argmax(counts))
-                base_color = CLASS_COLORS[majority_class]
+                base_color = COLOUR_SEQUENCE[majority_class]
                 new_fill = blend_colors("#FFFFFF", base_color, ratio)
             # Replace (or add) the fillcolor attribute.
             if 'fillcolor=' in line:
@@ -319,14 +366,13 @@ def main():
             pred = clf.predict(test_sample)[0]
             prob = clf.predict_proba(test_sample)[0]
             st.subheader(f"🔮 Prediction Results - Predicted Species: {st.session_state['class_names'][pred].title()}")
-            # Define the color sequence
-            color_sequence = ["#FEFEBB", "#C7E9B4", "#41B6C4"]
+            
 
             # Create a DataFrame with class names, probabilities, and colors
             df = pd.DataFrame({
                 "Species": st.session_state["class_names"],
                 "Probability": prob,
-                "Color": color_sequence[:len(st.session_state["class_names"])]
+                "Color": COLOUR_SEQUENCE[:len(st.session_state["class_names"])]
             })
 
             # Sort the DataFrame by Probability in descending order
@@ -335,7 +381,7 @@ def main():
 
             # Create a horizontal bar plot with custom colors
             fig = px.bar(df, x="Probability", y="Species", orientation="h", color="Species", 
-                        color_discrete_map={cls: color for cls, color in zip(st.session_state["class_names"], color_sequence)})
+                        color_discrete_map={cls: color for cls, color in zip(st.session_state["class_names"], COLOUR_SEQUENCE)})
 
             # Update the layout to display the probabilities with two decimal places
             fig.update_layout(yaxis=dict(tickfont=dict(size=14)), xaxis=dict(tickformat=".2f"), legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=1))
