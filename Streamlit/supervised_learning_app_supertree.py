@@ -71,8 +71,8 @@ def show_data_visualization(df, feature_names):
     st.plotly_chart(fig, use_container_width=True)
 
 def main():
-    HORIZONTAL = "logo.png"
-    ICON = "icon.png"
+    HORIZONTAL = "Streamlit/logo.png"
+    ICON = "Streamlit/icon.png"
 
     st.logo(HORIZONTAL, icon_image=ICON)
 
