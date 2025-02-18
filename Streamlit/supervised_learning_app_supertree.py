@@ -6,6 +6,7 @@ from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from supertree import SuperTree  # SuperTree expects the model object and extracts what it needs
 import re
+import os
 
 def train_model(max_depth):
     iris = load_iris()
@@ -245,11 +246,14 @@ def highlight_dot(clf, sample, feature_names, class_names):
 
 
 def main():
-    HORIZONTAL = "logo.png"
-    ICON = "icon.png"
+    HORIZONTAL = "./logo.png"
+    ICON = "./icon.png"
 
-    #st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
+    if not os.path.exists(HORIZONTAL) or not os.path.exists(ICON):
+        st.error("Logo or icon image not found. Please check the file names and paths.")
 
+else:
+    st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
     st.set_page_config(
         page_title="Krisolis Supervised Learning Demonstration",
         page_icon=ICON,
