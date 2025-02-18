@@ -307,10 +307,10 @@ def main():
         
         # In the sidebar, display new observation inputs.
         st.sidebar.subheader("Make a Prediction for a New Observation")
-        obs_sepal_length = st.sidebar.number_input("Sepal Length (cm)", value=5.8, key="obs_sepal_length")
-        obs_sepal_width  = st.sidebar.number_input("Sepal Width (cm)",  value=3.0, key="obs_sepal_width")
         obs_petal_length = st.sidebar.number_input("Petal Length (cm)", value=4.35, key="obs_petal_length")
         obs_petal_width  = st.sidebar.number_input("Petal Width (cm)",  value=1.3, key="obs_petal_width")
+        obs_sepal_length = st.sidebar.number_input("Sepal Length (cm)", value=5.8, key="obs_sepal_length")
+        obs_sepal_width  = st.sidebar.number_input("Sepal Width (cm)",  value=3.0, key="obs_sepal_width")
         
         # Only allow prediction if the model is trained.
         if st.sidebar.button("Make Prediction", key="predict_obs"):
