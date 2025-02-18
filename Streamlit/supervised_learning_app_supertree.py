@@ -246,8 +246,8 @@ def highlight_dot(clf, sample, feature_names, class_names):
 
 
 def main():
-    HORIZONTAL = "./logo.png"
-    ICON = "./icon.png"
+    HORIZONTAL = "Logo.png"
+    ICON = "Icon.png"
 
     if not os.path.exists(HORIZONTAL) or not os.path.exists(ICON):
         st.error("Logo or icon image not found. Please check the file names and paths.")
