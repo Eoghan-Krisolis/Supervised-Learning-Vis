@@ -248,7 +248,7 @@ def main():
     HORIZONTAL = "logo.png"
     ICON = "icon.png"
 
-    st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
+    #st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
 
     st.set_page_config(
         page_title="Krisolis Supervised Learning Demonstration",
