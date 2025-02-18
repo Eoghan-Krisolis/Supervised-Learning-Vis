@@ -252,8 +252,8 @@ def main():
     if not os.path.exists(HORIZONTAL) or not os.path.exists(ICON):
         st.error("Logo or icon image not found. Please check the file names and paths.")
 
-else:
-    st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
+    else:
+        st.logo(HORIZONTAL, size="large", link="http://www.krisolis.ie", icon_image=ICON)
     st.set_page_config(
         page_title="Krisolis Supervised Learning Demonstration",
         page_icon=ICON,
