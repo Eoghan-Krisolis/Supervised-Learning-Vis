@@ -71,17 +71,34 @@ def show_data_visualization(df, feature_names):
     st.plotly_chart(fig, use_container_width=True)
 
 def main():
-    st.set_page_config(page_title="SuperTree Visualization", layout="wide")
-    st.title("Decision Tree Visualization with SuperTree")
-    st.write(
-        """
-        This demo lets you interactively visualize the full Iris dataset, select the maximum tree depth,
-        and then train a Decision Tree model on the Iris data.
-        Once the model is trained, an interactive SuperTree visualization is displayed.
-        You can then test a new observation to get a prediction with class probabilities,
-        with the decision path highlighted via custom CSS.
-        """
-    )
+    HORIZONTAL = "logo.png"
+    ICON = "icon.png"
+
+    st.logo(HORIZONTAL, icon_image=ICON)
+
+    st.set_page_config(
+        page_title="Krisolis Supervised Learning Demonstration",
+        page_icon=ICON,
+        layout="wide",
+        initial_sidebar_state="expanded",
+        menu_items={
+            'About': """# Krisolis Supervised Learning Demonstration. 
+            Created by Eoghan Staunton @Krisolis
+            Using scikit-learn and supertree"""
+        })
+
+    st.title("🌳 Supervised Learning Demonstration with Decision Trees")
+    st.markdown("This app demonstrates a Supervised Machine Learning Model called a **Decision Tree Classifier** on the Iris dataset.", 
+             help="""The Iris dataset is a classic and widely utilized resource in the fields of statistics and machine learning. 
+             Introduced by British statistician and biologist Ronald Fisher in his 1936 paper 
+             "The use of multiple measurements in taxonomic problems," the dataset comprises 150 samples of iris flowers, divided equally among three species: 
+             Iris setosa, Iris versicolor, and Iris virginica. Each sample includes four features: sepal length, sepal width, petal length, and petal width, 
+             all measured in centimeters.
+             
+             Due to its simplicity and well-structured nature, the Iris dataset has become a standard test case for various statistical classification techniques and machine learning algorithms. """)
+    st.markdown("Use the controls in the sidebar to train a model. Once it is trained you can use it to make predictions.")
+
+    
     
     # Load the Iris dataset and create a DataFrame.
     iris = load_iris()
@@ -131,6 +148,7 @@ def main():
             clf = st.session_state["trained_model"]
             pred = clf.predict(test_sample)[0]
             prob = clf.predict_proba(test_sample)[0]
+            st.subheader("🔮 Prediction Result")
             st.write(f"**Prediction:** {st.session_state['class_names'][pred]}")
             st.write("**Class Probabilities:**")
             for cls, p in zip(st.session_state["class_names"], prob):
