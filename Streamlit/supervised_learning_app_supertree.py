@@ -71,8 +71,8 @@ def show_data_visualization(df, feature_names):
     st.plotly_chart(fig, use_container_width=True)
 
 def main():
-    HORIZONTAL = "Streamlit/logo.png"
-    ICON = "Streamlit/icon.png"
+    HORIZONTAL = "logo.png"
+    ICON = "icon.png"
 
     st.logo(HORIZONTAL, icon_image=ICON)
 
@@ -153,14 +153,7 @@ def main():
             st.write("**Class Probabilities:**")
             for cls, p in zip(st.session_state["class_names"], prob):
                 st.write(f"- {cls}: {p:.2f}")
-            # Regenerate the visualization with the test sample to highlight the decision path.
-            st.session_state["viz_html"] = generate_viz(
-                clf, st.session_state["X"], st.session_state["y"],
-                st.session_state["feature_names"], st.session_state["class_names"],
-                sample=list(test_sample[0])
-            )
-            st.subheader("Trained Decision Tree Decision Path Visualization")
-            st.components.v1.html(st.session_state["viz_html"], height=800, scrolling=True)
+            
 
 if __name__ == "__main__":
     if "model_trained" not in st.session_state:
